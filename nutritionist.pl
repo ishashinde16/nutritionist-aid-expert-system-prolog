@@ -1,8 +1,6 @@
 :- consult('food_db.pl').
 :- dynamic(user/7).
 
- :- consult('substitutions.pl').
-
 % ------------------ USER DATA ------------------
 
 % user(Name, Age, Gender, Weight_kg, Height_cm, ActivityLevel, Goal).
@@ -85,7 +83,6 @@ menu(Name) :-
     write('3. Generate full-day meal plan'), nl,
     write('4. Show nutrient-specific meals'), nl,
     write('5. Exit'), nl,
-    write('6. Suggest ingredient substitution'), nl,
     write('Choose an option: '), read(Choice),
     handle_choice(Choice, Name).
 
@@ -112,14 +109,6 @@ handle_choice(5, _) :-
 handle_choice(_, Name) :-
     write('Invalid choice.'), nl,
     menu(Name).
-
-handle_choice(6, Name) :-                                  
-    suggest_substitution(Name),
-    menu(Name).
-
-handle_choice(_, Name) :-
-     write('Invalid choice.'), nl,
-     menu(Name).
 
 print_meals([]).
 print_meals([(Dish, Cal, Protein) | T]) :-
@@ -150,21 +139,3 @@ low_sodium_dishes :-
     format('Low sodium dish: ~w (~w mg sodium)~n', [Dish, S]),
     fail.
 low_sodium_dishes.
-
-
-% Ingredient-substitution feature
- % (facts are in substitutions.pl: substitute(Food,Sub).)
-
- suggest_substitution(_User) :-
-     write('Enter the ingredient to substitute (e.g. butter_salted): '), nl,
-     read(Food),
-     (   findall(Sub, substitute(Food, Sub), Subs), Subs \= []
-+    -> format('Substitutes for ~w:~n', [Food]),
-+       print_subs(Subs)
-     ;   format('No substitutions found for ~w.~n', [Food])
-     ).
-
- print_subs([]).
- print_subs([H|T]) :-
-     format('- ~w~n', [H]),
-     print_subs(T).
