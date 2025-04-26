@@ -149,11 +149,25 @@ low_sodium_dishes.
 
 find_substitute :-
     write('Enter the ingredient you want to substitute (use underscores for spaces, e.g., butter_salted): '),
-    read(Ingredient),
-    (   substitute(Ingredient, Substitute)
-    ->  (   format('Substitutes for ~w:~n', [Ingredient]),
-            format('- ~w~n', [Substitute]),  % Directly print the substitute here
-            fail
+    read(UserInput),
+    atom_string(UserInput, UserInputStr),
+    replace_underscores_with_comma_underscore(UserInputStr, FormattedStr),
+    atom_string(FormattedAtom, FormattedStr),
+    findall(Sub, substitute(FormattedAtom, Sub), Substitutes),
+    (   Substitutes \= []
+    ->  (   format('Substitutes for ~w:~n', [FormattedAtom]),
+            print_substitutes(Substitutes)
         )
-    ;   format('Sorry, no substitutes found for ~w.~n', [Ingredient])
+    ;   format('Sorry, no substitutes found for ~w.~n', [FormattedAtom])
     ).
+
+print_substitutes([]).
+print_substitutes([Sub | Rest]) :-
+    format('- ~w~n', [Sub]),
+    print_substitutes(Rest).
+
+% Replace underscores _ with comma + underscore ,_
+replace_underscores_with_comma_underscore(Input, Output) :-
+    split_string(Input, "_", "", List),
+    atomic_list_concat(List, ',_', Output).
+
