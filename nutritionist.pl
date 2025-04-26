@@ -1,4 +1,5 @@
 :- consult('food_db.pl').
+:- consult('substitutions.pl').  
 :- dynamic(user/7).
 
 % ------------------ USER DATA ------------------
@@ -82,7 +83,8 @@ menu(Name) :-
     write('2. Suggest high-protein meals'), nl,
     write('3. Generate full-day meal plan'), nl,
     write('4. Show nutrient-specific meals'), nl,
-    write('5. Exit'), nl,
+    write('5. Find ingredient substitutes'), nl, 
+    write('6. Exit'), nl,
     write('Choose an option: '), read(Choice),
     handle_choice(Choice, Name).
 
@@ -104,7 +106,10 @@ handle_choice(3, Name) :-
 handle_choice(4, Name) :-
     nutrition_goal(Name),
     menu(Name).
-handle_choice(5, _) :-
+handle_choice(5, Name) :-             
+    find_substitute,
+    menu(Name).
+handle_choice(6, _) :-
     write('Goodbye!'), nl.
 handle_choice(_, Name) :-
     write('Invalid choice.'), nl,
@@ -139,3 +144,16 @@ low_sodium_dishes :-
     format('Low sodium dish: ~w (~w mg sodium)~n', [Dish, S]),
     fail.
 low_sodium_dishes.
+
+% ------------------ SUBSTITUTION FINDER ------------------
+
+find_substitute :-
+    write('Enter the ingredient you want to substitute (use underscores for spaces, e.g., butter_salted): '),
+    read(Ingredient),
+    (   substitute(Ingredient, Substitute)
+    ->  (   format('Substitutes for ~w:~n', [Ingredient]),
+            format('- ~w~n', [Substitute]),  % Directly print the substitute here
+            fail
+        )
+    ;   format('Sorry, no substitutes found for ~w.~n', [Ingredient])
+    ).
