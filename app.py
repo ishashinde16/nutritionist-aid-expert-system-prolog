@@ -1,8 +1,11 @@
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, redirect, render_template, render_template_string, request, session, url_for
+from pyswip import Prolog
 
 app = Flask(__name__)
-
 app.secret_key = '610220f7b087781e7f5973e0ad0de7c0'
+
+prolog = Prolog()
+prolog.consult("./prolog_logic/nutritionist.pl")
 
 @app.route('/')
 def index():
@@ -35,12 +38,51 @@ def menu():
 def substitution():
     return "Substitution Recommender Coming Soon!"
 
+# @app.route('/show_calorie_target')
+# def show_calorie_target():
+#     user = session.get('user')
+#     if not user:
+#         return redirect(url_for('login'))
+#     return "Daily Calorie Target functionality coming soon!"
+
 @app.route('/show_calorie_target')
 def show_calorie_target():
     user = session.get('user')
     if not user:
         return redirect(url_for('login'))
-    return "Daily Calorie Target functionality coming soon!"
+
+    # Extract user info
+    name = user['name']
+    age = user['age']
+    gender = user['gender']
+    weight = user['weight']
+    height = user['height']
+    activity = user['activity']
+    goal = user['goal']
+
+    # First, assert user into Prolog
+    try:
+        prolog.assertz(f"user('{name}', {age}, {gender}, {weight}, {height}, {activity}, {goal})")
+    except Exception as e:
+        print(f"Prolog assertion error: {e}")
+
+    # Now, query the calorie goal
+    calories = None
+    try:
+        query = list(prolog.query(f"goal_calories('{name}', FinalCalories)"))
+        if query:
+            calories = int(query[0]['FinalCalories'])
+    except Exception as e:
+        print(f"Prolog query error: {e}")
+
+    if calories is not None:
+        return render_template_string(f"""
+            <h1>Daily Calorie Target</h1>
+            <p>Hello {name}, your daily calorie target is: <strong>{calories} kcal</strong>.</p>
+            <a href="{{{{ url_for('menu') }}}}">Back to Menu</a>
+        """)
+    else:
+        return "Could not calculate calories. Please check your information."
 
 @app.route('/suggest_high_protein')
 def suggest_high_protein():

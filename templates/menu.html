@@ -10,6 +10,7 @@
 
     <h1>Welcome, {{ user.name }}!</h1>
     <h2>Nutritionist Aid Expert System - Menu</h2>
+    <a href="{{ url_for('logout') }}" class="logout">Logout</a>
 
     <ul>
         <li><a href="{{ url_for('show_calorie_target') }}">Show daily calorie target</a></li>
