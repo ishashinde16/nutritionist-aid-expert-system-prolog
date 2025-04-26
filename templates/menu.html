@@ -1,0 +1,23 @@
+<!-- templates/menu.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nutritionist Aid Menu</title>
+</head>
+<body>
+
+    <h1>Welcome, {{ user.name }}!</h1>
+    <h2>Nutritionist Aid Expert System - Menu</h2>
+
+    <ul>
+        <li><a href="{{ url_for('show_calorie_target') }}">Show daily calorie target</a></li>
+        <li><a href="{{ url_for('suggest_high_protein') }}">Suggest high-protein meals</a></li>
+        <li><a href="{{ url_for('generate_meal_plan') }}">Generate full-day meal plan</a></li>
+        <li><a href="{{ url_for('nutrient_choice') }}">Show nutrient-specific meals</a></li>
+        <!-- 5 is skipped because it's already handled on the index page -->
+    </ul>
+
+</body>
+</html>

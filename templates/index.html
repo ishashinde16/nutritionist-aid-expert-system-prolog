@@ -1,0 +1,27 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nutritionist Aid Expert System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Nutritionist Aid Expert System</h1>
+
+        <p>
+            Welcome to the Nutritionist Aid Expert System!<br>
+            This system helps you with personalized nutrition advice, suggests food substitutes based on your dietary needs, and assists in planning your meals intelligently using expert knowledge.
+        </p>
+
+        <div class="options">
+            <a href="{{ url_for('login') }}" class="button">User Login</a>
+            <a href="{{ url_for('substitution') }}" class="button">Food Substitution Recommender</a>
+        </div>
+    </div>
+
+</body>
+</html>
