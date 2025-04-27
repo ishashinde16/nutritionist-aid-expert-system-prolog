@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nutrient-Specific Options</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Choose Nutrient Goal</h1>
+    <form method="post" action="{{ url_for('nutrient_choice') }}">
+      <label><input type="radio" name="choice" value="high_fiber" required> High Fiber</label><br>
+      <label><input type="radio" name="choice" value="low_sodium" required> Low Sodium</label><br><br>
+      <button type="submit">Find Dishes</button>
+    </form>
+    
+    {% if dishes is defined %}
+      <h2>Results</h2>
+      {% if dishes %}
+        <ul>
+          {% for dish in dishes %}
+            <li>{{ dish }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No dishes found for that criterion.</p>
+      {% endif %}
+    {% endif %}
+    
+    <p><a class="button" href="{{ url_for('menu') }}">Back to Menu</a></p>
+  </div>
+</body>
+</html>

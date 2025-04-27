@@ -34,9 +34,45 @@ def menu():
         return redirect(url_for('login'))
     return render_template('menu.html', user=user)
 
-@app.route('/substitution')
+@app.route('/substitution', methods=['GET', 'POST'])
 def substitution():
-    return "Substitution Recommender Coming Soon!"
+    # 1️⃣ Build the dropdown list of all foods
+    raw_ings = set()
+    for sol in prolog.query("substitute(Food,_)" ):
+        raw_ings.add(sol['Food'])
+    # Display‐friendly list: "butter_salted" → "Butter Salted"
+    ingredients = sorted([ing.replace('_', ' ').title() for ing in raw_ings])
+
+    substitutes = None
+    ingredient = None
+
+    if request.method == 'POST':
+        # 2️⃣ Get the user’s choice
+        raw = request.form['ingredient']               # e.g. "Butter Salted"
+        ingredient = raw                              # for display
+
+        # 3️⃣ Map back to Prolog atom format
+        atom = raw.strip().lower().replace(' ', '_')   # "butter_salted"
+        
+        # 4️⃣ Query Prolog
+        subs = []
+        try:
+            for sol in prolog.query(f"substitute('{atom}', Sub)"):
+                subs.append(sol['Sub'])
+        except Exception as e:
+            print("Prolog substitution query error:", e)
+
+        # 5️⃣ Make them pretty: "oil_sunflower" → "Oil Sunflower"
+        substitutes = [s.replace('_', ' ').title() for s in subs]
+
+    # 6️⃣ Always render with these three variables
+    return render_template(
+        'substitution.html',
+        ingredients=ingredients,
+        substitutes=substitutes,
+        ingredient=ingredient
+    )
+
 
 # @app.route('/show_calorie_target')
 # def show_calorie_target():
@@ -76,11 +112,9 @@ def show_calorie_target():
         print(f"Prolog query error: {e}")
 
     if calories is not None:
-        return render_template_string(f"""
-            <h1>Daily Calorie Target</h1>
-            <p>Hello {name}, your daily calorie target is: <strong>{calories} kcal</strong>.</p>
-            <a href="{{{{ url_for('menu') }}}}">Back to Menu</a>
-        """)
+            return render_template('show_calorie_target.html',
+                           user=user,
+                           calories=calories)
     else:
         return "Could not calculate calories. Please check your information."
 
@@ -89,21 +123,66 @@ def suggest_high_protein():
     user = session.get('user')
     if not user:
         return redirect(url_for('login'))
-    return "High-Protein Meal Suggestions coming soon!"
+    
+    name = user['name']
+    suggestions = []
+    try:
+        query = list(prolog.query(f"suggest_meal('{name}', Dish, Calories, Protein)"))
+        for result in query:
+            suggestions.append((result['Dish'], result['Calories'], result['Protein']))
+    except Exception as e:
+        print(f"Prolog high-protein query error: {e}")
+    
+    return render_template('suggest_high_protein.html',
+                           suggestions=suggestions)
+
 
 @app.route('/generate_meal_plan')
 def generate_meal_plan():
     user = session.get('user')
     if not user:
         return redirect(url_for('login'))
-    return "Full-Day Meal Plan generation coming soon!"
+    
+    name = user['name']
+    meals = []
+    total_cals = 0
+    try:
+        query = list(prolog.query(f"meal_plan('{name}', Meals, TotalCals)"))
+        print("Meal Plan Query Result:", query)  # Debug print
+        if query:
+            meals = query[0]['Meals']
+            total_cals = query[0]['TotalCals']
+            meals = [dish for (dish, _, _) in meals]
+    except Exception as e:
+        print(f"Prolog meal plan query error: {e}")
+    
+    return render_template('meal_plan.html', meals=meals, total_cals=total_cals)
 
-@app.route('/nutrient_choice')
+
+@app.route('/nutrient_choice', methods=['GET', 'POST'])
 def nutrient_choice():
-    user = session.get('user')
-    if not user:
-        return redirect(url_for('login'))
-    return "Nutrient-Specific Meal options coming soon!"
+    dishes = []  # Initialize dishes to an empty list.
+    
+    if request.method == 'POST':
+        choice = request.form['choice']
+        
+        try:
+            if choice == 'high_fiber':
+                query = list(prolog.query("food(Dish, _, Macros, _), member(fiber:Fiber, Macros), Fiber > 5"))
+                dishes = [result['Dish'] for result in query]
+            elif choice == 'low_sodium':
+                query = list(prolog.query("food(Dish, _, _, Micros), member(sodium:Sodium, Micros), Sodium < 100"))
+                dishes = [result['Dish'] for result in query]
+        except Exception as e:
+            print(f"Prolog nutrient choice query error: {e}")
+            dishes = []  # Handle errors gracefully, show an empty list.
+
+        # Render the result after processing.
+        return render_template('nutrient_choice.html', dishes=dishes)
+    
+    # Handle GET request: Render the form initially.
+    return render_template('nutrient_choice.html', dishes=dishes)
+
 
 @app.route('/logout')
 def logout():

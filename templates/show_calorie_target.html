@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Calorie Target</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="menu-container">
+    <div class="menu-card">
+      <p>Hello, <strong>{{ user.name }}</strong>!</p>
+      <h1>🎯 Your Daily Calorie Target</h1>
+     
+      <p class="highlight"><span id="calories">0</span> kcal</p>
+      <a class="button" href="{{ url_for('menu') }}">Back to Menu</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const calories = {{ calories }};
+      const counter = document.getElementById('calories');
+      let count = 0;
+      const duration = 2000; // 2 seconds
+      const interval = 10;
+      const step = calories / (duration / interval);
+
+      const timer = setInterval(() => {
+        count += step;
+        if (count >= calories) {
+          count = calories;
+          clearInterval(timer);
+        }
+        counter.textContent = Math.floor(count);
+      }, interval);
+    });
+  </script>
+</body>
+</html>

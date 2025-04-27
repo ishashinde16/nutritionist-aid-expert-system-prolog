@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>High-Protein Suggestions</title>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+  />
+</head>
+<body>
+  <div class="container">
+    <h1>High-Protein Meal Suggestions</h1>
+    {% if suggestions %}
+    <div class="table-container">
+      <table class="meal-table">
+        <thead>
+          <tr>
+            <th>Dish</th>
+            <th>Calories (kcal)</th>
+            <th>Protein (g)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dish, calories, protein in suggestions %}
+          <tr>
+            <td>{{ dish }}</td>
+            <td>{{ calories }}</td>
+            <td>{{ protein }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <p>No high-protein meals found under your calorie target.</p>
+    {% endif %}
+    <p><a class="button" href="{{ url_for('menu') }}">Back to Menu</a></p>
+  </div>
+</body>
+</html>

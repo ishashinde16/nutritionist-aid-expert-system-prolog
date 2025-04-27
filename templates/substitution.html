@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ingredient Substitution</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Find Ingredient Substitute</h1>
+
+    <form method="post" action="{{ url_for('substitution') }}">
+      <label>Ingredient:<br>
+        <input list="ingredients" name="ingredient"
+               placeholder="Type or select ingredient…"
+               autocomplete="off" required>
+        <datalist id="ingredients">
+          {% for ing in ingredients %}
+            <option value="{{ ing }}">
+          {% endfor %}
+        </datalist>
+      </label><br><br>
+      <button type="submit">Find Substitute</button>
+    </form>
+    
+    {% if substitutes is not none %}
+      {% if substitutes %}
+        <h2>Substitutes for “{{ ingredient }}”</h2>
+        <ul class="sub-list">
+          {% for sub in substitutes %}
+            <li>{{ sub }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No substitutes found for “{{ ingredient }}”.</p>
+      {% endif %}
+    {% endif %}
+    
+
+    <p><a class="button" href="{{ url_for('menu') }}">Back to Menu</a></p>
+  </div>
+</body>
+</html>

@@ -1,24 +1,23 @@
-<!-- templates/menu.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Nutritionist Aid Menu</title>
+  <meta charset="UTF-8">
+  <title>Menu – Nutritionist Aid</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
-    <h1>Welcome, {{ user.name }}!</h1>
-    <h2>Nutritionist Aid Expert System - Menu</h2>
-    <a href="{{ url_for('logout') }}" class="logout">Logout</a>
-
-    <ul>
-        <li><a href="{{ url_for('show_calorie_target') }}">Show daily calorie target</a></li>
-        <li><a href="{{ url_for('suggest_high_protein') }}">Suggest high-protein meals</a></li>
-        <li><a href="{{ url_for('generate_meal_plan') }}">Generate full-day meal plan</a></li>
-        <li><a href="{{ url_for('nutrient_choice') }}">Show nutrient-specific meals</a></li>
-        <!-- 5 is skipped because it's already handled on the index page -->
-    </ul>
-
+  <div class="menu-container">
+    <div class="menu-card">
+      <h1>Welcome, {{ user.name }}!</h1>
+      <ul class="menu-list">
+        <li><a class="button" href="{{ url_for('show_calorie_target') }}">Show Daily Calorie Target</a></li>
+        <li><a class="button" href="{{ url_for('suggest_high_protein') }}">Suggest High-Protein Meals</a></li>
+        <li><a class="button" href="{{ url_for('generate_meal_plan') }}">Generate Full-Day Meal Plan</a></li>
+        <li><a class="button" href="{{ url_for('nutrient_choice') }}">Nutrient-Specific Meal Options</a></li>
+        <li><a class="button" href="{{ url_for('substitution') }}">Ingredient Substitution</a></li>
+        <li><a class="button" href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </div>
+  </div>
 </body>
 </html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Full-Day Meal Plan</title>
+</head>
+<body>
+    <h1>Full-Day Meal Plan</h1>
+    {% if meals %}
+        <ul>
+        {% for meal in meals %}
+            <li>{{ meal }}</li>
+        {% endfor %}
+        </ul>
+        <p><strong>Total Calories: {{ total_cals }} kcal</strong></p>
+    {% else %}
+        <p>No meal plan found.</p>
+    {% endif %}
+    <a href="{{ url_for('menu') }}">Back to Menu</a>
+</body>
+</html>
