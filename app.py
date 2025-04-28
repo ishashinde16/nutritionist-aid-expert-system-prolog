@@ -98,7 +98,7 @@ def show_calorie_target():
 
     # First, assert user into Prolog
     try:
-        prolog.assertz(f"user('{name}', {age}, {gender}, {weight}, {height}, {activity}, {goal})")
+        prolog.assertz(f"user('{name}', {age}, '{gender}', {weight}, {height}, '{activity}', '{goal}')")
     except Exception as e:
         print(f"Prolog assertion error: {e}")
 
@@ -159,25 +159,58 @@ def suggest_high_protein():
 #     return render_template('meal_plan.html', meals=meals, total_cals=total_cals)
 
 
+# @app.route('/nutrient_choice', methods=['GET', 'POST'])
+# def nutrient_choice():
+#     dishes = []  # Initialize dishes to an empty list.
+#     benefit = None  # Initialize benefit message
+    
+#     if request.method == 'POST':
+#         choice = request.form['choice']
+        
+#         try:
+#             if choice == 'high_fiber':
+#                 query = list(prolog.query("food(Dish, _, Macros, _), member(fiber:Fiber, Macros), Fiber > 5"))
+#                 dishes = [result['Dish'] for result in query]
+#             elif choice == 'low_sodium':
+#                 query = list(prolog.query("food(Dish, _, _, Micros), member(sodium:Sodium, Micros), Sodium < 100"))
+#                 dishes = [result['Dish'] for result in query]
+            
+#             # 🔥 Fetch the corresponding benefit based on choice
+#             benefit_query = list(prolog.query(f"benefit({choice}, Benefit)"))
+#             if benefit_query:
+#                 benefit = benefit_query[0]['Benefit']
+        
+#         except Exception as e:
+#             print(f"Prolog nutrient choice query error: {e}")
+#             dishes = []
+#             benefit = None  # No benefit if error occurs
+
+#         # Render the result after processing.
+#         return render_template('nutrient_choice.html', dishes=dishes, benefit=benefit)
+    
+#     # Handle GET request: Render the form initially.
+#     return render_template('nutrient_choice.html', dishes=dishes)
+
 @app.route('/nutrient_choice', methods=['GET', 'POST'])
 def nutrient_choice():
     dishes = []  # Initialize dishes to an empty list.
-    
+
     if request.method == 'POST':
-        choice = request.form['choice']
+        goal = request.form['goal']
         
         try:
-            if choice == 'high_fiber':
+            if goal == 'improve_gut_health':
+                # Improve Gut Health → High Fiber dishes
                 query = list(prolog.query("food(Dish, _, Macros, _), member(fiber:Fiber, Macros), Fiber > 5"))
                 dishes = [result['Dish'] for result in query]
-            elif choice == 'low_sodium':
+            elif goal == 'improve_blood_pressure':
+                # Improve BP → Low Sodium dishes
                 query = list(prolog.query("food(Dish, _, _, Micros), member(sodium:Sodium, Micros), Sodium < 100"))
                 dishes = [result['Dish'] for result in query]
         except Exception as e:
             print(f"Prolog nutrient choice query error: {e}")
-            dishes = []  # Handle errors gracefully, show an empty list.
+            dishes = []  # Handle errors gracefully
 
-        # Render the result after processing.
         return render_template('nutrient_choice.html', dishes=dishes)
     
     # Handle GET request: Render the form initially.

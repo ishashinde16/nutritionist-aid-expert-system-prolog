@@ -149,3 +149,7 @@ replace_underscores_with_comma_underscore(Input, Output) :-
     split_string(Input, "_", "", List),
     atomic_list_concat(List, ',_', Output).
 
+
+% Define benefit rules:
+benefit(low_sodium, 'Maintaining Blood Pressure Levels').
+benefit(high_fiber, 'Gut Health Improvement').
