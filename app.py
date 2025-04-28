@@ -137,26 +137,26 @@ def suggest_high_protein():
                            suggestions=suggestions)
 
 
-@app.route('/generate_meal_plan')
-def generate_meal_plan():
-    user = session.get('user')
-    if not user:
-        return redirect(url_for('login'))
+# @app.route('/generate_meal_plan')
+# def generate_meal_plan():
+#     user = session.get('user')
+#     if not user:
+#         return redirect(url_for('login'))
     
-    name = user['name']
-    meals = []
-    total_cals = 0
-    try:
-        query = list(prolog.query(f"meal_plan('{name}', Meals, TotalCals)"))
-        print("Meal Plan Query Result:", query)  # Debug print
-        if query:
-            meals = query[0]['Meals']
-            total_cals = query[0]['TotalCals']
-            meals = [dish for (dish, _, _) in meals]
-    except Exception as e:
-        print(f"Prolog meal plan query error: {e}")
+#     name = user['name']
+#     meals = []
+#     total_cals = 0
+#     try:
+#         query = list(prolog.query(f"meal_plan('{name}', Meals, TotalCals)"))
+#         print("Meal Plan Query Result:", query)  # Debug print
+#         if query:
+#             meals = query[0]['Meals']
+#             total_cals = query[0]['TotalCals']
+#             meals = [dish for (dish, _, _) in meals]
+#     except Exception as e:
+#         print(f"Prolog meal plan query error: {e}")
     
-    return render_template('meal_plan.html', meals=meals, total_cals=total_cals)
+#     return render_template('meal_plan.html', meals=meals, total_cals=total_cals)
 
 
 @app.route('/nutrient_choice', methods=['GET', 'POST'])

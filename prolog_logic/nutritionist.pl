@@ -48,22 +48,6 @@ suggest_meal(User, Dish, Calories, Protein) :-
     member(protein:Protein, Macros),
     Protein >= 10.
 
-% Generate a full meal plan under calorie target
-meal_plan(User, Meals, TotalCals) :-
-    goal_calories(User, MaxCals),
-    findall((Dish, Cal, Protein), (food(Dish, Cal, Macros, _), Cal < 400, member(protein:Protein, Macros), Protein > 5), Options),
-    pick_meals(Options, MaxCals, Meals, TotalCals).
-
-pick_meals(_, 0, [], 0).
-pick_meals([], _, [], 0).
-pick_meals([(Dish, Cal, Protein) | Rest], MaxCals, [(Dish, Cal, Protein) | Chosen], TotalCals) :-
-    Cal =< MaxCals,
-    Remaining is MaxCals - Cal,
-    pick_meals(Rest, Remaining, Chosen, SubTotal),
-    TotalCals is Cal + SubTotal.
-pick_meals([_ | Rest], MaxCals, Chosen, TotalCals) :-
-    pick_meals(Rest, MaxCals, Chosen, TotalCals).
-
 % ------------------ USER INTERFACE ------------------
 
 start :-
@@ -96,12 +80,6 @@ handle_choice(2, Name) :-
     (suggest_meal(Name, Dish, Cal, Protein),
      format('~w: ~w kcal, ~w g protein~n', [Dish, Cal, Protein]),
      fail ; true),
-    menu(Name).
-handle_choice(3, Name) :-
-    meal_plan(Name, Meals, Total),
-    write('Full-Day Meal Plan:'), nl,
-    print_meals(Meals),
-    format('Total Calories: ~2f kcal~n', [Total]),
     menu(Name).
 handle_choice(4, Name) :-
     nutrition_goal(Name),
